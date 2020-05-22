@@ -10,6 +10,7 @@ import mplfinance as mpf
 import financeplayground
 import datetime
 import pickle
+import update
 
 #theFile = openpyxl.load_workbook("stock portfolio.xlsx")
 #allSheetNames = theFile.sheetnames
@@ -139,47 +140,13 @@ def main():
 
 
         elif action == 6: #download s&p 500 data and automatically compile them into a separate file contain all the adjusted close
-            action = generalfunction.getnumber("Which data do you wanna get?\ns&p press 1\nnasdaq press2")
+            action = generalfunction.getnumber("Which data do you wanna get?\ns&p press 1\nnasdaq press2\nget all press 3 ")
             if action == 1:
-                if not os.path.exists('lastdownloadsp.dat'): ##check if the user have download the data before, if not automatically download the data
-                    financeplayground.get_data_from_yahoo('y','https://en.wikipedia.org/wiki/List_of_S%26P_500_companies','sp500tickers.pickle','stocks_dfs',0)
-                    financeplayground.compile_data('sp500tickers.pickle','stocks_dfs')
-                    timeofcompletion = datetime.datetime.now()
-                    lastdownloadsp = open('lastdownloadsp.dat','wb')
-                    pickle.dump(str(timeofcompletion),lastdownloadsp)
-                    lastdownloadsp.close()
-                else:
-                    lastdownloadsp = open('lastdownloadsp.dat','rb') ##if the user have download the data before, print the last update date and ask the user if he want to redownload it
-                    value = pickle.load(lastdownloadsp)
-                    print("You have download the s&p 500 data at "+value+" do you want to redownload it?")
-                    choice = input('y/n')
-                    if choice == 'y':
-                        financeplayground.get_data_from_yahoo('y','https://en.wikipedia.org/wiki/List_of_S%26P_500_companies','sp500tickers.pickle','stocks_dfs',0)
-                        financeplayground.compile_data('sp500tickers.pickle','stocks_dfs')
-                        timeofcompletion = datetime.datetime.now()
-                        lastdownloadsp = open('lastdownloadsp.dat', 'wb')
-                        pickle.dump(str(timeofcompletion), lastdownloadsp)
-                        lastdownloadsp.close()
+                update.updatesp()
             if action == 2:
-                if not os.path.exists('lastdownloadnasdaq.dat'): ##check if the user have download the data before, if not automatically download the data
-                    financeplayground.get_data_from_yahoo('y','https://en.wikipedia.org/wiki/NASDAQ-100','nasdaqtickers.pickle','stocks_nasdaq',1)
-                    financeplayground.compile_data('nasdaqtickers.pickle','stocks_nasdaq')
-                    timeofcompletion = datetime.datetime.now()
-                    lastdownloadsp = open('lastdownloadsp.dat','wb')
-                    pickle.dump(str(timeofcompletion),lastdownloadsp)
-                    lastdownloadsp.close()
-                else:
-                    lastdownloadsp = open('lastdownloadsp.dat','rb') ##if the user have download the data before, print the last update date and ask the user if he want to redownload it
-                    value = pickle.load(lastdownloadsp)
-                    print("You have download the s&p 500 data at "+value+" do you want to redownload it?")
-                    choice = input('y/n')
-                    if choice == 'y':
-                        financeplayground.get_data_from_yahoo('y','https://en.wikipedia.org/wiki/NASDAQ-100','nasdaqtickers.pickle','stocks_nasdaq',1)
-                        financeplayground.compile_data('nasdaqtickers.pickle','stocks_nasdaq')
-                        timeofcompletion = datetime.datetime.now()
-                        lastdownloadsp = open('lastdownloadsp.dat', 'wb')
-                        pickle.dump(str(timeofcompletion), lastdownloadsp)
-                        lastdownloadsp.close()
+                update.updatenasdaq()
+            if action == 3:
+                update.updateall()
 
 
         elif action == 7:
