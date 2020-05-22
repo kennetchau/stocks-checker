@@ -13,46 +13,47 @@ style.use('ggplot')
 yf.pdr_override()
 
 ## function to get all ticket of s&p 500
-def save_sp500_tickers():
-    resp = requests.get('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies') #getting s&p 500 list from wikipedia
+def save_tickers(link,filename,row):
+    idx = int(row)
+    resp = requests.get(link) #getting s&p 500 list from wikipedia
     soup = bs.BeautifulSoup(resp.text,"lxml")
     table = soup.find('table',{'id':'constituents'})
     tickers = []
     for row in table.findAll('tr')[1:]:
-        ticker = row.find('td').text.strip()
+        ticker = row.findAll('td')[idx].text.strip()
         mapping = str.maketrans('.', '-')
         ticker = ticker.translate(mapping)
         tickers.append(ticker)
-    with open("sp500tickers.pickle","wb") as f:
+    with open(filename,"wb") as f:
         pickle.dump(tickers,f)
     return tickers
 
 ## function to get all s&p 500 data from yahoo
-def get_data_from_yahoo(input):
+def get_data_from_yahoo(input,link,filename,filepath,row):
     if input =='y':
-        tickers = save_sp500_tickers()
+        tickers = save_tickers(link,filename,row)
     else:
-        with open("sp500tickers.pickle","rb") as f:
+        with open(filename,"rb") as f:
             tickers = pickle.load(f)
-    if not os.path.exists('stocks_dfs'):
-        os.makedirs('stocks_dfs')
+    if not os.path.exists(filepath):
+        os.makedirs(filepath)
 
     start = dt.datetime(2000,1,1)
     end = dt.datetime.now()
 
     for ticker in tickers:
             df = web.DataReader(ticker,'yahoo',start,end)
-            df.to_csv('stocks_dfs/{}.csv'.format(ticker))
+            df.to_csv('{}/{}.csv'.format(filepath,ticker))
             print('{} downloaded'.format(ticker))
 
 #Combine all stock adj close into 1 dataframe
-def compile_data():
-    with open('sp500tickers.pickle','rb') as f:
+def compile_data(filename,filepath):
+    with open(filename,'rb') as f:
         tickers = pickle.load(f)
     main_df = pd.DataFrame()
 
     for count, ticker in enumerate(tickers):
-        df = pd.read_csv('stocks_dfs/{}.csv'.format(ticker))
+        df = pd.read_csv('{}/{}.csv'.format(filepath,ticker))
         df.set_index('Date',inplace = True)
         df.rename(columns={'Adj Close': ticker},inplace = True)
         df.drop(['Open','High','Low','Close','Volume'],1,inplace =True)
@@ -66,10 +67,10 @@ def compile_data():
             print(count)
 
     print(main_df.head())
-    main_df.to_csv('sp500_joined_closed.csv')
+    main_df.to_csv('{}_joined_closed.csv'.format(filename))
 
-def visualize_data():
-    df = pd.read_csv('sp500_joined_closed.csv')
+def visualize_data(filename):
+    df = pd.read_csv(filename)
     df_corr = df.corr()
     df_corr.to_csv('df_corr.csv')
     print(df_corr.head())
