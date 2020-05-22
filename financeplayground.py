@@ -14,6 +14,8 @@ yf.pdr_override()
 
 ## function to get all ticket of s&p 500
 def save_tickers(link,filename,row):
+    if not os.path.exists('ticker/'):
+        os.makedirs('ticker/')
     idx = int(row)
     resp = requests.get(link) #getting s&p 500 list from wikipedia
     soup = bs.BeautifulSoup(resp.text,"lxml")
@@ -24,7 +26,8 @@ def save_tickers(link,filename,row):
         mapping = str.maketrans('.', '-')
         ticker = ticker.translate(mapping)
         tickers.append(ticker)
-    with open(filename,"wb") as f:
+    filenames = 'ticker/{}'.format(filename)
+    with open(filenames,"wb") as f:
         pickle.dump(tickers,f)
     return tickers
 
@@ -48,7 +51,8 @@ def get_data_from_yahoo(input,link,filename,filepath,row):
 
 #Combine all stock adj close into 1 dataframe
 def compile_data(filename,filepath):
-    with open(filename,'rb') as f:
+    fileloc = 'ticker/{}'.format(filename)
+    with open(fileloc,'rb') as f:
         tickers = pickle.load(f)
     main_df = pd.DataFrame()
 
@@ -66,13 +70,18 @@ def compile_data(filename,filepath):
         if count%10 == 0:
             print(count)
 
+    if not os.path.exists('joined_closed'):
+        os.makedirs('joined_closed')
     print(main_df.head())
-    main_df.to_csv('{}_joined_closed.csv'.format(filename))
+    main_df.to_csv('joined_closed/{}_joined_closed.csv'.format(filename))
 
 def visualize_data(filename):
-    df = pd.read_csv(filename)
+    if not os.path.exists('corr'):
+        os.makedirs('corr')
+    cfilepath = 'joined_closed/{}'.format(filename)
+    df = pd.read_csv(cfilepath)
     df_corr = df.corr()
-    df_corr.to_csv('df_corr.csv')
+    df_corr.to_csv('corr/{}_corr.csv'.format(filename))
     print(df_corr.head())
     data = df_corr.values
     fig = plt.figure()

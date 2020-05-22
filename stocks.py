@@ -152,11 +152,11 @@ def main():
         elif action == 7:
             action = generalfunction.getnumber('s&p 500 press 1\nnasdaq press 2 ')
             if action == 1:
-                if not os.path.exists('sp500tickers.pickle_joined_closed.csv'):
+                if not os.path.exists('joined_closed/sp500tickers.pickle_joined_closed.csv'):
                     financeplayground.compile_data('sp500tickers.pickle','stocks_dfs')
                 financeplayground.visualize_data('sp500tickers.pickle_joined_closed.csv')
             if action == 2:
-                if not os.path.exists('nasdaqtickers.pickle_joined_closed.csv'):
+                if not os.path.exists('joined_closed/nasdaqtickers.pickle_joined_closed.csv'):
                     financeplayground.compile_data('nasdaqtickers.pickle','stocks_nasdaq')
                 financeplayground.visualize_data('nasdaqtickers.pickle_joined_closed.csv')
 
