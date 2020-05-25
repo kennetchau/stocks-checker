@@ -2,13 +2,13 @@
 import warnings
 warnings.filterwarnings("ignore",category=FutureWarning)
 import yfinance as yf   # downloading data from yahoo finance
-import generalfunction
+import generalfunction as gf
 import glob, os
 import pandas as pd
 from pandas_datareader import data as pdr
 import mplfinance as mpf
 import financeplayground
-import datetime
+import datetime as dt
 import pickle
 import update
 
@@ -58,7 +58,7 @@ def main():
     action = 1
     while action != 0:
         print("What do you want to do today\n")
-        action = generalfunction.getnumber("\npress 1 to search current and historic stock price \npress 2 to download data about a stock \npress 3 to view downloaded data \npress 4 to show s&p 500 index \npress 5 to get tickers from an index \npress 6 to get all s&p 500 or nasdaq price data (WARNING: THIS WILL TAKE A WHILE)\npress 7 to show the correlation heatmap between stock (WARNING: THIS WILL TAKE A WHILE) \npress 8 to use the calculator \npress 0 to quit ")
+        action = gf.getnumber("\npress 1 to search current and historic stock price \npress 2 to download data about a stock \npress 3 to view downloaded data \npress 4 to show s&p 500 index \npress 5 to get tickers from an index \npress 6 to get all s&p 500 or nasdaq price data (WARNING: THIS WILL TAKE A WHILE)\npress 7 to show the correlation heatmap between stock (WARNING: THIS WILL TAKE A WHILE) \npress 8 to use the calculator \npress 0 to quit ")
         #if action == 1:
             #Whattofind = input("What you want to find? ")
             #specificCellletter = (find_specific_cell(Whattofind))
@@ -85,7 +85,7 @@ def main():
                 print()
             option = input("Would you want more data? y/n")
             while option == "y":
-                period = generalfunction.getnumber("How many days of data do you want? ")
+                period = gf.getnumber("How many days of data do you want? ")
                 pricehistory = whattofindprice.history(period=(str(period) +"d"))
                 print("The price of " + Whattofind + " is\n" + str(pricehistory))
                 mpf.plot(pricehistory,type='candle',volume=True,title=str(Whattofind),ylabel='OHLC Candles',ylabel_lower='Volume',style='charles')
@@ -118,8 +118,8 @@ def main():
                         enddate = hisend
                     elif question == "2":
                         startdate = hisstart
-                        enddate = datetime.date.today()
-                        enddate = enddate + datetime.timedelta(days=1)
+                        enddate = dt.date.today()
+                        enddate = enddate + dt.timedelta(days=1)
                         lastdownload = open('history/downloadhistory.dat', 'wb')
                         pickle.dump(str(Whattofind), lastdownload)
                         pickle.dump(startdate, lastdownload)
@@ -143,10 +143,10 @@ def main():
                     pickle.dump(startdate, lastdownload)
                     pickle.dump(enddate, lastdownload)
                     lastdownload.close()
-            startdate = generalfunction.changestringtodate(startdate)
+            startdate = gf.changestringtodate(startdate)
             try:
-                enddate = generalfunction.changestringtodate(enddate)
-                enddate = enddate + datetime.timedelta(days=1)
+                enddate = gf.changestringtodate(enddate)
+                enddate = enddate + dt.timedelta(days=1)
             except TypeError:
                 pass
             data = yf.download(str(Whattofind), start=startdate, end=enddate).to_csv(str(Whattofind) + ".csv")
@@ -176,7 +176,7 @@ def main():
                 mpf.plot(sp500,type='candle',title = 'S&P 500', style = 'charles')
 
         elif action == 5: #get tickers
-            action = generalfunction.getnumber("Which ticket do you want to get?\ns&p press 1\nnasdaq press 2")
+            action = gf.getnumber("Which ticket do you want to get?\ns&p press 1\nnasdaq press 2")
             if action == 1:
                 financeplayground.save_tickers('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies','sp500tickers.pickle',0)
                 with open("sp500tickers.pickle", "rb") as f:
@@ -190,7 +190,7 @@ def main():
 
 
         elif action == 6: #download s&p 500 data and automatically compile them into a separate file contain all the adjusted close
-            action = generalfunction.getnumber("Which data do you wanna get?\ns&p press 1\nnasdaq press 2\nget all press 3 ")
+            action = gf.getnumber("Which data do you wanna get?\ns&p press 1\nnasdaq press 2\nget all press 3 ")
             if action == 1:
                 update.updatesp()
             if action == 2:
@@ -200,7 +200,7 @@ def main():
 
 
         elif action == 7:
-            action = generalfunction.getnumber('s&p 500 press 1\nnasdaq press 2 ')
+            action = gf.getnumber('s&p 500 press 1\nnasdaq press 2 ')
             if action == 1:
                 if not os.path.exists('joined_closed/sp500tickers.pickle_joined_closed.csv'):
                     financeplayground.compile_data('sp500tickers.pickle','stocks_dfs')
