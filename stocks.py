@@ -93,12 +93,62 @@ def main():
 
 
         elif action == 2:    #A function allows the user to download stock data by asking the user to input the stock symbol and the start and end date then save the data into a csv file
-            Whattofind = input("Which stock/stocks price are you interested? (You can enter one or more stocks just separate the stock symbol with space)")
-            startdate = input("Startdate (format: YYYY/MM/DD): ")
-            enddate = input("Enddate (format: YYYY/MM/DD): ")
+            if not os.path.exists('history/downloadhistory.dat'):
+                Whattofind = input(
+                    "Which stock/stocks price are you interested? (You can enter one or more stocks just separate the stock symbol with space)")
+                startdate = input("Startdate (format: YYYY/MM/DD): ")
+                enddate = input("Enddate (format: YYYY/MM/DD): ")
+                lastdownload = open('history/downloadhistory.dat', 'wb')
+                pickle.dump(str(Whattofind), lastdownload)
+                pickle.dump(startdate,lastdownload)
+                pickle.dump(enddate,lastdownload)
+                lastdownload.close()
+            else:
+                lastdownload = open('history/downloadhistory.dat','rb')
+                history = pickle.load(lastdownload)
+                hisstart = pickle.load(lastdownload)
+                hisend = pickle.load(lastdownload)
+                print("You have previously download data of '{}' from {} to {}, would you like to download it again?".format(history,hisstart, hisend))
+                choice = input("y/n\n")
+                if choice =='y':
+                    question = input("Would you like to download the same period? if yes please press 1, if you would like to update your data to today press 2, if you would like to download the data of specific time period press enter.")
+                    Whattofind = history
+                    if question == '1':
+                        startdate = hisstart
+                        enddate = hisend
+                    elif question == "2":
+                        startdate = hisstart
+                        enddate = datetime.date.today()
+                        enddate = enddate + datetime.timedelta(days=1)
+                        lastdownload = open('history/downloadhistory.dat', 'wb')
+                        pickle.dump(str(Whattofind), lastdownload)
+                        pickle.dump(startdate, lastdownload)
+                        pickle.dump(enddate, lastdownload)
+                        lastdownload.close()
+                    else:
+                        startdate = input("Startdate (format: YYYY/MM/DD): ")
+                        enddate = input("Enddate (format: YYYY/MM/DD): ")
+                        lastdownload = open('history/downloadhistory.dat','wb')
+                        pickle.dump(str(Whattofind), lastdownload)
+                        pickle.dump(startdate, lastdownload)
+                        pickle.dump(enddate, lastdownload)
+                        lastdownload.close()
+                else:
+                    Whattofind = input(
+                        "Which stock/stocks price are you interested? (You can enter one or more stocks just separate the stock symbol with space)")
+                    startdate = input("Startdate (format: YYYY/MM/DD): ")
+                    enddate = input("Enddate (format: YYYY/MM/DD): ")
+                    lastdownload = open('history/downloadhistory.dat', 'wb')
+                    pickle.dump(str(Whattofind), lastdownload)
+                    pickle.dump(startdate, lastdownload)
+                    pickle.dump(enddate, lastdownload)
+                    lastdownload.close()
             startdate = generalfunction.changestringtodate(startdate)
-            enddate = generalfunction.changestringtodate(enddate)
-            enddate = enddate + datetime.timedelta(days=1)
+            try:
+                enddate = generalfunction.changestringtodate(enddate)
+                enddate = enddate + datetime.timedelta(days=1)
+            except TypeError:
+                pass
             data = yf.download(str(Whattofind), start=startdate, end=enddate).to_csv(str(Whattofind) + ".csv")
             print("The data have been saved in the directory "+str(os.getcwd()))
 
@@ -140,7 +190,7 @@ def main():
 
 
         elif action == 6: #download s&p 500 data and automatically compile them into a separate file contain all the adjusted close
-            action = generalfunction.getnumber("Which data do you wanna get?\ns&p press 1\nnasdaq press2\nget all press 3 ")
+            action = generalfunction.getnumber("Which data do you wanna get?\ns&p press 1\nnasdaq press 2\nget all press 3 ")
             if action == 1:
                 update.updatesp()
             if action == 2:
