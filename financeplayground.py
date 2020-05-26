@@ -9,6 +9,7 @@ import yfinance as yf
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import style
+import generalfunction as gf
 style.use('ggplot')
 yf.pdr_override()
 
@@ -103,5 +104,26 @@ def visualize_data(filename):
     plt.tight_layout()
     plt.show()
 
+def get_index():
+    str = ''
+    index = gf.getnumber(
+        "Which index do you want to compare?\n1) S&P \n2) NASDAQ \n3) Dows Jones\n4) Hang Seng index\n5) Euronext 100\n6) S&P TSX ")
+    if index == 1:
+        str = '^GSPC'
+    if index == 2:
+        str = '^IXIC'
+    if index == 3:
+        str = '^DJI'
+    #if index == 4:
+        #str = '^SSEC'
+    if index == 4:
+        str = '^HSI'
+    #if index == 6:
+       # str = '^FTSE 100'
+    if index == 5:
+        str = '^N100'
+    if index == 6:
+        str = '^GSPTSE'
+    return str
 
 #visualize_data()

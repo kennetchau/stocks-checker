@@ -12,6 +12,7 @@ import datetime as dt
 import pickle
 import update
 
+
 #theFile = openpyxl.load_workbook("stock portfolio.xlsx")
 #allSheetNames = theFile.sheetnames
 #currentSheet = 0
@@ -58,7 +59,7 @@ def main():
     action = 1
     while action != 0:
         print("What do you want to do today\n")
-        action = gf.getnumber("\npress 1 to search current and historic stock price \npress 2 to download data about a stock \npress 3 to view downloaded data \npress 4 to show s&p 500 index \npress 5 to get tickers from an index \npress 6 to get all s&p 500 or nasdaq price data (WARNING: THIS WILL TAKE A WHILE)\npress 7 to show the correlation heatmap between stock (WARNING: THIS WILL TAKE A WHILE) \npress 8 to use the calculator \npress 0 to quit ")
+        action = gf.getnumber("\npress 1 to search current and historic stock price \npress 2 to download data about a stock \npress 3 to view downloaded data \npress 4 to show the index\npress 5 to get tickers from an index \npress 6 to get all s&p 500 or nasdaq price data (WARNING: THIS WILL TAKE A WHILE)\npress 7 to show the correlation heatmap between stock (WARNING: THIS WILL TAKE A WHILE) \npress 9 to use the calculator \npress 0 to quit ")
         #if action == 1:
             #Whattofind = input("What you want to find? ")
             #specificCellletter = (find_specific_cell(Whattofind))
@@ -168,12 +169,13 @@ def main():
 
         elif action == 4: #A function allows the user to search up s&p 500 index history
             choice = 0
-            sp500 = pdr.get_data_yahoo('^GSPC', period=('60d'))
+            stockidx = financeplayground.get_index()
+            sp500 = pdr.get_data_yahoo(stockidx, period=('60d'))
             print(sp500.tail())
-            mpf.plot(sp500,type='line',title='S&P 500')
+            mpf.plot(sp500,type='line',title=stockidx)
             choice = input("Do you want to show the candle plot? (y/n)")
             if choice == 'y':
-                mpf.plot(sp500,type='candle',title = 'S&P 500', style = 'charles')
+                mpf.plot(sp500,type='candle',title = stockidx , style = 'charles')
 
         elif action == 5: #get tickers
             action = gf.getnumber("Which ticket do you want to get?\ns&p press 1\nnasdaq press 2")
@@ -210,7 +212,23 @@ def main():
                     financeplayground.compile_data('nasdaqtickers.pickle','stocks_nasdaq')
                 financeplayground.visualize_data('nasdaqtickers.pickle_joined_closed.csv')
 
-        elif action == 8: #A function that allow the user to use the calculator
+        #elif action == 8: ## Run a linear regression between a chosen stock and a chosen index
+         #   Whattofind = input("Which stock price are you interested? ")
+          #  whattofindprice = yf.Ticker(Whattofind)
+           # pricehistory = whattofindprice.history(period="5y")
+            #stockid = financeplayground.get_index()
+            #print(stockid)
+            #indexs = pdr.get_data_yahoo(stockid, period=('5y'))
+            #pricehistory.drop(['Open', 'High', 'Low', 'Close', 'Volume'], 1, inplace=True)
+            #indexs.drop(['Open','High','Low','Close','Volume'],1,inplace =True)
+            #print(stockid)
+            #print(pricehistory)
+            #df = pd.DataFrame(pricehistory,stockid,index = 'Date')
+            #print(df)
+
+
+
+        elif action == 9: #A function that allow the user to use the calculator
             calc = ""
             while calc != 'exit':
                 calc = input("Type Calculation (type exit to exit): \n")
