@@ -181,12 +181,12 @@ def main():
             action = gf.getnumber("Which ticket do you want to get?\ns&p press 1\nnasdaq press 2")
             if action == 1:
                 financeplayground.save_tickers('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies','sp500tickers.pickle',0)
-                with open("sp500tickers.pickle", "rb") as f:
+                with open("ticker/sp500tickers.pickle", "rb") as f:
                     tickers = pickle.load(f)
                     print(tickers)
             if action == 2:
                 financeplayground.save_tickers('https://en.wikipedia.org/wiki/NASDAQ-100','nasdaqtickers.pickle',1)
-                with open("nasdaqtickers.pickle", "rb") as f:
+                with open("ticker/nasdaqtickers.pickle", "rb") as f:
                     tickers = pickle.load(f)
                     print(tickers)
 
