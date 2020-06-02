@@ -40,3 +40,13 @@ Here are some examples of the output:
 
 ###### Showing Correlation heatmap 
 ![downloaddata](https://github.com/kennetchau/stocks-checker/blob/master/examples/correlation%20heatmap.PNG)
+
+## Roadmap
+In the future, I would like to incorporate a function to do correlation between a stock and a index. This will allow the user to use how correlated a stock is to a region. Also, I would like to include a research function so the user could pull the balance sheet and income statement of a company if they wish to.
+
+## Contact 
+Name: Ming Yin Kenneth Chau 
+Email: kennetchau@gmail.com
+
+
+
