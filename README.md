@@ -15,5 +15,8 @@ matplotlib
 os
 pickle
 
-Install requires packages:
-Open python console and type 'pip install -r requirenments.txt'
+## Install requires packages:
+Use the package manager pip to install the requirenment package
+'''bash
+pip install -r requirenments.txt
+'''
