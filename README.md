@@ -5,15 +5,15 @@ This is originally a subprogram of the project 'Simple virtual assistance', it i
 The program use panda, yfinance to get price data from yahoo finance. Use mplfinance to plot ohlc graphs. Beautiful soup for web scraping(getting all ticker symbol of S&P 500 from wikipedia)
 
 Built with:
-1. beautiful soup 
-1. yfinance
-1. mplfinance
-1. panda
-1. numpy 
-1. datetime
-1. matplotlib
-1. os
-1. pickle
+* beautiful soup 
+* yfinance
+* mplfinance
+* panda
+* numpy 
+* datetime
+* matplotlib
+* os
+* pickle
 
 ## Install requires packages:
 Use the package manager pip to install the requirenment package
