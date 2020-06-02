@@ -17,6 +17,6 @@ pickle
 
 ## Install requires packages:
 Use the package manager pip to install the requirenment package
-'''bash
+```bash
 pip install -r requirenments.txt
-'''
+```
