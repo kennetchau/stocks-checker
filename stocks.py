@@ -183,6 +183,7 @@ def main():
                 hisend = pickle.load(lastdownload)
                 startdate = gf.changestringtodate(hisstart)
                 enddate = gf.changestringtodate(hisend)
+                enddate = enddate + dt.timedelta(days=1)
                 data = yf.download(str(stockidx), start=startdate, end=enddate).to_csv(str(stockidx) + ".csv")
 
         elif action == 5: #get tickers
