@@ -11,44 +11,8 @@ import financeplayground
 import datetime as dt
 import pickle
 import update
+import researcher
 
-
-#theFile = openpyxl.load_workbook("stock portfolio.xlsx")
-#allSheetNames = theFile.sheetnames
-#currentSheet = 0
-
-
-#for sheet in allSheetNames:
- #   if sheet == "stock portfolio":
-  #      currentSheet = theFile[sheet]
-
-
-#def find_specific_cell(str):
- #   for row in range(1, currentSheet.max_row + 1):
-  #      for column in "ABCDE":
-   #         cell_name = "{}{}".format(column, row)
-    #        if currentSheet[cell_name].value == str:
-     #           return cell_name
-    #return 0
-
-#def get_column_letter(specificCellLetter):
- #   if specificCellLetter == 0:
-  #      return 0
-   # letter = specificCellLetter[0:-1]
-    #return letter
-
-#def get_role_value(specificCellLetter):
- #   if specificCellLetter == 0:
-  #      return 0
-   # number = specificCellLetter[1:2]
-    #return number
-
-#def get_all_values_by_cell_letter(letter):
- #   for row in range(1, currentSheet.max_row + 1):
-  #      for column in letter:
-   #         cell_name = "{}{}".format(column, row)
-    #        #print(cell_name)
-     #       print("cell position {} has value {}".format(cell_name, currentSheet[cell_name].value))
 
 
 def main():
@@ -59,7 +23,7 @@ def main():
     action = 1
     while action != 0:
         print("What do you want to do today\n")
-        action = gf.getnumber("\npress 1 to search current and historic stock price \npress 2 to download data about a stock \npress 3 to view downloaded data \npress 4 to show the index\npress 5 to get tickers from an index \npress 6 to get all s&p 500 or nasdaq price data (WARNING: THIS WILL TAKE A WHILE)\npress 7 to show the correlation heatmap between stock (WARNING: THIS WILL TAKE A WHILE) \npress 9 to use the calculator \npress 0 to quit ")
+        action = gf.getnumber("\npress 1 to search current and historic stock price \npress 2 to download data about a stock \npress 3 to view downloaded data \npress 4 to show the index\npress 5 to get tickers from an index \npress 6 to get all s&p 500 or nasdaq price data (WARNING: THIS WILL TAKE A WHILE)\npress 7 to show the correlation heatmap between stock (WARNING: THIS WILL TAKE A WHILE)\npress 8 to use the stock researcher \npress 9 to use the calculator \npress 0 to quit ")
         #if action == 1:
             #Whattofind = input("What you want to find? ")
             #specificCellletter = (find_specific_cell(Whattofind))
@@ -79,7 +43,7 @@ def main():
             Whattofind = input("Which stock price are you interested? ")
             whattofindprice = yf.Ticker(Whattofind)
             pricehistory = whattofindprice.history(period="10d")
-            print("The price of " + Whattofind + " is\n" + str(pricehistory))
+            print("The price of " + Whattofind + " for the last 10 days is\n" + str(pricehistory))
             try:
                 mpf.plot(pricehistory, type='candle',volume=True,title=str(Whattofind),ylabel='OHLC Candles',ylabel_lower='Volume',style='charles')
             except:
@@ -112,7 +76,7 @@ def main():
                 print("You have previously download data of '{}' from {} to {}, would you like to download it again?".format(history,hisstart, hisend))
                 choice = input("y/n\n")
                 if choice =='y':
-                    question = input("Would you like to download the same period? if yes please press 1, if you would like to update your data to today press 2, if you would like to download the data of specific time period press enter.")
+                    question = input("Would you like to download the same period? if yes please press 1, if you would like to update your data to today press 2, if you would like to update your data to 60days press 3, if you would like to download the data of specific time period press enter.")
                     Whattofind = history
                     if question == '1':
                         startdate = hisstart
@@ -122,6 +86,15 @@ def main():
                         enddate = dt.date.today()
                         enddate = enddate + dt.timedelta(days=1)
                         lastdownload = open('history/downloadhistory.dat', 'wb')
+                        pickle.dump(str(Whattofind), lastdownload)
+                        pickle.dump(startdate, lastdownload)
+                        pickle.dump(enddate, lastdownload)
+                        lastdownload.close()
+                    elif question == '3':
+                        startdate = dt.date.today()
+                        startdate = startdate - dt.timedelta(days=60)
+                        enddate = dt.date.today() +dt.timedelta(days=1)
+                        lastdownload = open('history/downloadhistory.dat','wb')
                         pickle.dump(str(Whattofind), lastdownload)
                         pickle.dump(startdate, lastdownload)
                         pickle.dump(enddate, lastdownload)
@@ -144,7 +117,11 @@ def main():
                     pickle.dump(startdate, lastdownload)
                     pickle.dump(enddate, lastdownload)
                     lastdownload.close()
-            startdate = gf.changestringtodate(startdate)
+
+            try:
+                startdate = gf.changestringtodate(startdate)
+            except TypeError:
+                pass
             try:
                 enddate = gf.changestringtodate(enddate)
                 enddate = enddate + dt.timedelta(days=1)
@@ -221,19 +198,9 @@ def main():
                     financeplayground.compile_data('nasdaqtickers.pickle','stocks_nasdaq')
                 financeplayground.visualize_data('nasdaqtickers.pickle_joined_closed.csv')
 
-        #elif action == 8: ## Run a linear regression between a chosen stock and a chosen index
-         #   Whattofind = input("Which stock price are you interested? ")
-          #  whattofindprice = yf.Ticker(Whattofind)
-           # pricehistory = whattofindprice.history(period="5y")
-            #stockid = financeplayground.get_index()
-            #print(stockid)
-            #indexs = pdr.get_data_yahoo(stockid, period=('5y'))
-            #pricehistory.drop(['Open', 'High', 'Low', 'Close', 'Volume'], 1, inplace=True)
-            #indexs.drop(['Open','High','Low','Close','Volume'],1,inplace =True)
-            #print(stockid)
-            #print(pricehistory)
-            #df = pd.DataFrame(pricehistory,stockid,index = 'Date')
-            #print(df)
+        elif action == 8: ## Research stocks
+            researcher.research()
+
 
 
 
@@ -245,6 +212,6 @@ def main():
                 print("Answer: " + str(eval(calc)))
 
 
-#main()
+main()
 
 
