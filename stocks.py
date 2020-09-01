@@ -58,6 +58,7 @@ def main():
 
 
         elif action == 2:    #A function allows the user to download stock data by asking the user to input the stock symbol and the start and end date then save the data into a csv file
+            yes = 0
             if not os.path.exists('history/downloadhistory.dat'):
                 Whattofind = input(
                     "Which stock/stocks price are you interested? (You can enter one or more stocks just separate the stock symbol with space)")
@@ -65,18 +66,21 @@ def main():
                 enddate = input("Enddate (format: YYYY/MM/DD): ")
                 lastdownload = open('history/downloadhistory.dat', 'wb')
                 pickle.dump(str(Whattofind), lastdownload)
-                pickle.dump(startdate,lastdownload)
-                pickle.dump(enddate,lastdownload)
+                pickle.dump(startdate, lastdownload)
+                pickle.dump(enddate, lastdownload)
                 lastdownload.close()
             else:
-                lastdownload = open('history/downloadhistory.dat','rb')
+                lastdownload = open('history/downloadhistory.dat', 'rb')
                 history = pickle.load(lastdownload)
                 hisstart = pickle.load(lastdownload)
                 hisend = pickle.load(lastdownload)
-                print("You have previously download data of '{}' from {} to {}, would you like to download it again?".format(history,hisstart, hisend))
+                print(
+                    "You have previously download data of '{}', would you like to download it again?".format(
+                        history))
                 choice = input("y/n\n")
-                if choice =='y':
-                    question = input("Would you like to download the same period? if yes please press 1, if you would like to update your data to today press 2, if you would like to update your data to 60days press 3, if you would like to download the data of specific time period press enter.")
+                if choice == 'y':
+                    question = input(
+                        "Would you like to download the same period? if yes please press 1, if you would like to update your data to today press 2, if you would like to update your data to 60days press 3, if you would like to download the data of specific time period press enter.")
                     Whattofind = history
                     if question == '1':
                         startdate = hisstart
@@ -91,18 +95,12 @@ def main():
                         pickle.dump(enddate, lastdownload)
                         lastdownload.close()
                     elif question == '3':
-                        startdate = dt.date.today()
-                        startdate = startdate - dt.timedelta(days=60)
-                        enddate = dt.date.today() +dt.timedelta(days=1)
-                        lastdownload = open('history/downloadhistory.dat','wb')
-                        pickle.dump(str(Whattofind), lastdownload)
-                        pickle.dump(startdate, lastdownload)
-                        pickle.dump(enddate, lastdownload)
-                        lastdownload.close()
+                        yes = 1
+                        pass
                     else:
                         startdate = input("Startdate (format: YYYY/MM/DD): ")
                         enddate = input("Enddate (format: YYYY/MM/DD): ")
-                        lastdownload = open('history/downloadhistory.dat','wb')
+                        lastdownload = open('history/downloadhistory.dat', 'wb')
                         pickle.dump(str(Whattofind), lastdownload)
                         pickle.dump(startdate, lastdownload)
                         pickle.dump(enddate, lastdownload)
@@ -110,25 +108,40 @@ def main():
                 else:
                     Whattofind = input(
                         "Which stock/stocks price are you interested? (You can enter one or more stocks just separate the stock symbol with space)")
-                    startdate = input("Startdate (format: YYYY/MM/DD): ")
-                    enddate = input("Enddate (format: YYYY/MM/DD): ")
-                    lastdownload = open('history/downloadhistory.dat', 'wb')
-                    pickle.dump(str(Whattofind), lastdownload)
-                    pickle.dump(startdate, lastdownload)
-                    pickle.dump(enddate, lastdownload)
-                    lastdownload.close()
-
+                    CHOICE = input(
+                        "The default option for this download is 60 day period, do you want to proceed?(y/n)")
+                    if CHOICE.Lower()== 'y':
+                        startdate = "0000/00/00"
+                        enddate = "0000/00/00"
+                        lastdownload = open('history/downloadhistory.dat', 'wb')
+                        pickle.dump(str(Whattofind), lastdownload)
+                        pickle.dump(startdate, lastdownload)
+                        pickle.dump(enddate, lastdownload)
+                        lastdownload.close()
+                        yes = 1
+                    if CHOICE.lower() == 'n':
+                        startdate = input("Startdate (format: YYYY/MM/DD): ")
+                        enddate = input("Enddate (format: YYYY/MM/DD): ")
+                        lastdownload = open('history/downloadhistory.dat', 'wb')
+                        pickle.dump(str(Whattofind), lastdownload)
+                        pickle.dump(startdate, lastdownload)
+                        pickle.dump(enddate, lastdownload)
+                        lastdownload.close()
+                # the following three try functions are use to change the date from string to dt type and also choosing which mode to download, the 60 days or the custom date
             try:
                 startdate = gf.changestringtodate(startdate)
-            except TypeError:
+            except:
                 pass
             try:
                 enddate = gf.changestringtodate(enddate)
                 enddate = enddate + dt.timedelta(days=1)
-            except TypeError:
+            except:
                 pass
-            data = yf.download(str(Whattofind), start=startdate, end=enddate).to_csv(str(Whattofind) + ".csv")
-            print("The data have been saved in the directory "+str(os.getcwd()))
+            if yes == 0:
+                data = yf.download(str(Whattofind), start=startdate, end=enddate).to_csv(str(Whattofind) + ".csv")
+            elif yes == 1:
+                data = yf.download(str(Whattofind), period="60d").to_csv(str(Whattofind) + ".csv")
+            print("The data have been saved in the directory " + str(os.getcwd()))
 
         elif action == 3:   #A function to allow user to open csv files
             print("Which csv do you want to open? (Please type the full name): ")
