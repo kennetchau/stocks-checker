@@ -110,7 +110,7 @@ def main():
                         "Which stock/stocks price are you interested? (You can enter one or more stocks just separate the stock symbol with space)")
                     CHOICE = input(
                         "The default option for this download is 60 day period, do you want to proceed?(y/n)")
-                    if CHOICE.Lower()== 'y':
+                    if CHOICE.lower()== 'y':
                         startdate = "0000/00/00"
                         enddate = "0000/00/00"
                         lastdownload = open('history/downloadhistory.dat', 'wb')
