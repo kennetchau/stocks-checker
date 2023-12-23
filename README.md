@@ -54,7 +54,6 @@ In the future, I would like to incorporate a function to do correlation between 
 ## Contact 
 Name: Ming Yin Kenneth Chau 
 
-Email: kennetchau@gmail.com
-
+Email: kenetx@pm.me
 
 
